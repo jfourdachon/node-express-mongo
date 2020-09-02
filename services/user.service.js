@@ -17,7 +17,6 @@ exports.createUserService = async (
     });
     return newUser;
   } catch (error) {
-    console.log({ error });
-    throw Error('Error while creating User');
+    throw Error(`Error while creating User: ${error}`);
   }
 };
