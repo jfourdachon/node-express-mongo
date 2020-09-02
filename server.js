@@ -7,20 +7,42 @@ const app = require('./app');
 
 const DB = process.env.DATABASE;
 
-mongoose
-  .connect(DB, {
+mongoose.Promise = Promise;
+
+mongoose.connection.on('connected', () => {
+  console.log('Connection Established');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('Connection Reestablished');
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('Connection Disconnected');
+});
+
+mongoose.connection.on('close', () => {
+  console.log('Connection Closed');
+});
+
+mongoose.connection.on('error', (error) => {
+  console.log(`ERROR: ${error}`);
+});
+
+const dbConnect = async () => {
+  await mongoose.connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
     useUnifiedTopology: true
-  })
-  .then(() => {
-    console.log('DB connection successful');
   });
+};
+
+dbConnect().catch((error) => console.error({ error }));
 
 /******************************************************
  *
- * Chapter 7 !
+ * Chapter 8 video 9 !
  *
  ******************************************************/
 
