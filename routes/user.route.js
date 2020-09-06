@@ -11,12 +11,12 @@ const {
 } = require('../controllers/user.controller');
 
 router.get('/', getAllusers);
-router.get('/user/:id', getUserById);
+router.get('/:id', getUserById);
 
 router.post('/register', createUser);
 
-router.patch('/update/:id', updateUser);
+router.patch('/:id', updateUser);
 
-router.delete('/delete/:id', deleteUser);
+router.delete('/:id', deleteUser);
 
 module.exports = router;
