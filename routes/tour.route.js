@@ -8,11 +8,17 @@ const {
   createTour,
   updateTour,
   deleteTour,
-  aliasTopTours
+  aliasTopTours,
+  getTourStats,
+  getMonthlyPlan
 } = require('../controllers/tour.controller');
 
-//alias with middleware
+// alias with middleware
 router.get('/top-5-cheap', aliasTopTours, getAllTours);
+
+// aggregation routes
+router.get('/stats', getTourStats);
+router.get('/monthly-plan/:year', getMonthlyPlan);
 
 router.get('/', getAllTours);
 router.get('/:id', getTourById);

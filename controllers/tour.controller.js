@@ -3,7 +3,9 @@ const {
   getAllTours,
   getTourById,
   updateTour,
-  deleteTour
+  deleteTour,
+  aggregateTour,
+  getMonthlyPlan
 } = require('../services/tour.service');
 
 exports.aliasTopTours = (req, _, next) => {
@@ -101,6 +103,40 @@ exports.deleteTour = async (req, res) => {
     res.status(400).json({
       status: 'error',
       message: err.message
+    });
+  }
+};
+
+exports.getTourStats = async (_, res) => {
+  try {
+    const stats = await aggregateTour();
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        data: stats
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'error',
+      message: err.message
+    });
+  }
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const plan = await getMonthlyPlan(req.params);
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        data: plan
+      }
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'error',
+      message: error.message
     });
   }
 };
