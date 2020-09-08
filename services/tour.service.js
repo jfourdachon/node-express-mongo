@@ -39,7 +39,7 @@ exports.updateTour = async (id, body) => {
   try {
     const user = await Tour.findByIdAndUpdate(id, body, {
       new: true,
-      runValidators: true
+      runValidators: true // validators from schema
     });
     return user;
   } catch (error) {
