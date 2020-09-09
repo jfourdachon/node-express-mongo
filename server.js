@@ -42,12 +42,12 @@ dbConnect().catch((error) => console.error({ error }));
 
 /******************************************************
  *
- * Chapter 8 video 23 !
+ * Chapter 9 video 8!
  *
  ******************************************************/
 
 //  - START SERVER
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`App running on port ${port}!`);
 });

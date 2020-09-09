@@ -31,7 +31,7 @@ exports.getTourById = async (id) => {
     const user = await Tour.findById(id);
     return user;
   } catch (error) {
-    throw Error(`Tour with id: ${id} has not been found`);
+    throw Error(`Tour with id: ${id} has not been found- ${error}`);
   }
 };
 
