@@ -1,11 +1,9 @@
 const {
-  createUserService,
   getAllusers,
   getUserById,
   updateUser,
   deleteUser
 } = require('../services/user.service');
-const User = require('../models/user.model');
 
 exports.getAllusers = async (req, res) => {
   try {
@@ -43,30 +41,6 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-exports.createUser = async (req, res) => {
-  //TODO check params validation
-  try {
-    const foundedUser = await User.findOne({ email: req.body.email });
-    if (foundedUser) {
-      return res
-        .status(200)
-        .json({ status: 400, message: 'User found', type: 'already-found' });
-    }
-    const user = await createUserService(req.body);
-    return res.status(201).json({
-      status: 'success',
-      data: {
-        user
-      },
-      message: 'User created'
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err.message
-    });
-  }
-};
 exports.deleteUser = (req, res) => {
   res.status(500).json({
     status: 'error',

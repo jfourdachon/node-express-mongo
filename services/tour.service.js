@@ -1,12 +1,13 @@
 const APIFeatures = require('../utils/apiFeatures');
 const Tour = require('../models/tour.model');
+const AppError = require('../utils/appError');
 
-exports.createTour = async (args) => {
+exports.createTour = async (args, next) => {
   try {
     const newTour = await Tour.create(args);
     return newTour;
   } catch (error) {
-    throw Error(`Error while creating Tour: ${error}`);
+    return next(new AppError(`Error while creating Tour: ${error}`, 404));
   }
 };
 
@@ -26,32 +27,32 @@ exports.getAllTours = async (params) => {
     throw Error(`Error while getting tours: ${error}`);
   }
 };
-exports.getTourById = async (id) => {
+exports.getTourById = async (id, next) => {
   try {
-    const user = await Tour.findById(id);
-    return user;
+    const tour = await Tour.findById(id);
+    return tour;
   } catch (error) {
-    throw Error(`Tour with id: ${id} has not been found- ${error}`);
+    return next(new AppError('No tour was found with this ID!', 404));
   }
 };
 
-exports.updateTour = async (id, body) => {
+exports.updateTour = async (id, body, next) => {
   try {
-    const user = await Tour.findByIdAndUpdate(id, body, {
+    const tour = await Tour.findByIdAndUpdate(id, body, {
       new: true,
       runValidators: true // validators from schema
     });
-    return user;
+    return tour;
   } catch (error) {
-    throw Error(`Error while updating tour: ${error}`);
+    return next(new AppError(error.message, 404));
   }
 };
 
-exports.deleteTour = async (id) => {
+exports.deleteTour = async (id, next) => {
   try {
     await Tour.findOneAndDelete({ _id: id });
   } catch (err) {
-    throw Error(`Error while deleting tour: ${err}`);
+    return next(new AppError(err.message, 404));
   }
 };
 

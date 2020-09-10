@@ -1,25 +1,19 @@
-const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
 
 exports.createUserService = async ({
-  firstname,
-  lastname,
+  username,
   email,
+  photo,
   password,
-  dateOfBirth
+  passwordConfirm
 }) => {
   try {
-    if (!password) {
-      throw Error('You need to provide a password');
-    } else {
-      password = await bcrypt.hash(password, 10);
-    }
     const newUser = await User.create({
-      firstname,
-      lastname,
+      username,
       email,
+      photo,
       password,
-      dateOfBirth
+      passwordConfirm
     });
     return newUser;
   } catch (error) {

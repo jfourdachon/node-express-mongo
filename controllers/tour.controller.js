@@ -8,6 +8,7 @@ const {
   getMonthlyPlan
 } = require('../services/tour.service');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
 exports.aliasTopTours = (req, _, next) => {
   req.query.limit = '5';
@@ -18,6 +19,7 @@ exports.aliasTopTours = (req, _, next) => {
 
 exports.getAllTours = catchAsync(async (req, res, next) => {
   const tours = await getAllTours(req.query);
+
   return res.status(200).json({
     status: 'success',
     result: tours.length,
@@ -29,7 +31,11 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTourById = catchAsync(async (req, res, next) => {
-  const tour = await getTourById(req.params.id);
+  // TODO make a better express errors handling
+  const tour = await getTourById(req.params.id, next);
+  if (!tour) {
+    return next(new AppError('No tour was found with this ID!', 404));
+  }
   return res.status(200).json({
     status: 'success',
     data: {
@@ -40,8 +46,7 @@ exports.getTourById = catchAsync(async (req, res, next) => {
 });
 
 exports.createTour = catchAsync(async (req, res, next) => {
-  //TODO check params validation
-  const tour = await createTour(req.body);
+  const tour = await createTour(req.body, next);
   return res.status(201).json({
     status: 'success',
     data: {
@@ -52,7 +57,8 @@ exports.createTour = catchAsync(async (req, res, next) => {
 });
 
 exports.updateTour = catchAsync(async (req, res, next) => {
-  const tour = await updateTour(req.params.id, req.body);
+  const tour = await updateTour(req.params.id, req.body, next);
+
   return res.status(200).json({
     status: 'success',
     data: {
@@ -63,7 +69,10 @@ exports.updateTour = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
-  await deleteTour(req.params.id);
+  const tour = await deleteTour(req.params.id, next);
+  if (!tour) {
+    return next(new AppError('No tour was found with this ID!', 404));
+  }
   return res.status(204).json({
     status: 'success',
     data: {
