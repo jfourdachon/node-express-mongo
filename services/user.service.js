@@ -1,11 +1,20 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
+const AppError = require('../utils/appError');
 
-exports.createUserService = async ({
+const signToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN
+  });
+};
+exports.signup = async ({
   username,
   email,
   photo,
   password,
-  passwordConfirm
+  passwordConfirm,
+  passwordChangedAt,
+  role
 }) => {
   try {
     const newUser = await User.create({
@@ -13,20 +22,41 @@ exports.createUserService = async ({
       email,
       photo,
       password,
-      passwordConfirm
+      passwordConfirm,
+      passwordChangedAt,
+      role
     });
-    return newUser;
+
+    const token = signToken(newUser.id);
+
+    const result = {
+      newUser,
+      token
+    };
+    return result;
   } catch (error) {
     throw Error(`Error while creating User: ${error}`);
   }
 };
 
-exports.getAllusers = async () => {
+exports.login = async (id, res, next) => {
+  try {
+    const token = signToken(id);
+    res.status(200).json({
+      status: 'success',
+      token
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 404));
+  }
+};
+
+exports.getAllusers = async (next) => {
   try {
     const users = await User.find();
     return users;
   } catch (error) {
-    throw Error(`Error while getting users: ${error}`);
+    return next(new AppError(error.message, 404));
   }
 };
 exports.getUserById = async (id) => {

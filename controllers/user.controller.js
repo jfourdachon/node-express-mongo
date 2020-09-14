@@ -4,24 +4,18 @@ const {
   updateUser,
   deleteUser
 } = require('../services/user.service');
+const catchAsync = require('../utils/catchAsync');
 
-exports.getAllusers = async (req, res) => {
-  try {
-    const users = await getAllusers();
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        users
-      },
-      message: 'Succesfully fetching users'
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err.message
-    });
-  }
-};
+exports.getAllusers = catchAsync(async (req, res, next) => {
+  const users = await getAllusers(next);
+  return res.status(200).json({
+    status: 'success',
+    data: {
+      users
+    },
+    message: 'Succesfully fetching users'
+  });
+});
 
 exports.getUserById = async (req, res) => {
   try {

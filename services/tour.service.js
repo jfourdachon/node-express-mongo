@@ -50,7 +50,8 @@ exports.updateTour = async (id, body, next) => {
 
 exports.deleteTour = async (id, next) => {
   try {
-    await Tour.findOneAndDelete({ _id: id });
+    const tour = await Tour.findOneAndDelete({ _id: id });
+    return tour;
   } catch (err) {
     return next(new AppError(err.message, 404));
   }
