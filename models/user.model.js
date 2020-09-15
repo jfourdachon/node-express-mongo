@@ -50,6 +50,7 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+// USER MIDDLEWARES
 userSchema.pre('save', async function (next) {
   // Only runs if password was actually modified
   if (!this.isModified('password')) return next();
@@ -62,6 +63,15 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  // Due to network token can be generated before new password is saved -> (- 1000)
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// ADD METHODS TO USER
 userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
@@ -75,7 +85,6 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
       this.passwordChangedAt.getTime() / 1000,
       10
     );
-    console.log(changedTimeStamp, JWTTimestamp);
     return JWTTimestamp < changedTimeStamp;
   }
   // False means password has not been change after last token
@@ -89,8 +98,6 @@ userSchema.methods.createPasswordResetToken = function () {
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-
-  console.log({ resetToken }, this.passwordResetToken);
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 

@@ -1,5 +1,11 @@
+const crypto = require('crypto');
 const User = require('../models/user.model');
-const { signup, login, forgotPassword } = require('../services/user.service');
+const {
+  signup,
+  login,
+  forgotPassword,
+  resetPassword
+} = require('../services/user.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -52,12 +58,28 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError('There is no user with this email address.', 404));
   }
-  await forgotPassword(user, req, res, next);
+  const forgottenPassword = await forgotPassword(user, req, res, next);
+
+  return forgottenPassword;
 });
 
-exports.resetPassword = (req, res, next) => {
+exports.resetPassword = catchAsync(async (req, res, next) => {
   // 1) get user based on the token
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new AppError('Token is invalid or has expired', 400));
+  }
   // 2) if token has not expired, and there is user, set the new password
-  // 3) Update changePasswordAt property for the user
-  // 4) Log the user in, send JWT
-};
+  const resetedPassword = await resetPassword(user, req, res);
+
+  return resetedPassword;
+});

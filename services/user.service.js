@@ -124,3 +124,20 @@ exports.forgotPassword = async (user, req, res, next) => {
     );
   }
 };
+
+exports.resetPassword = async (user, req, res) => {
+  // 1) Set the new password
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  // 2) Send new token to the client
+  const token = signToken(user._id);
+  res.status(200).json({
+    status: 'success',
+    token
+  });
+};
