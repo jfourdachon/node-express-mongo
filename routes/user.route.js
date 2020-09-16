@@ -5,7 +5,7 @@ const router = express.Router();
 const {
   getAllusers,
   getUserById,
-  updateUser,
+  updateMe,
   deleteUser
 } = require('../controllers/user.controller');
 
@@ -29,7 +29,7 @@ router.patch('/updatePassword', protect, updatePassword);
 router.get('/', getAllusers);
 router.get('/:id', getUserById);
 
-router.patch('/:id', updateUser);
+router.patch('/updateMe', protect, updateMe);
 
 router.delete('/:id', deleteUser);
 

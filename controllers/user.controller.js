@@ -1,10 +1,19 @@
 const {
   getAllusers,
   getUserById,
-  updateUser,
-  deleteUser
+  deleteUser,
+  updateMe
 } = require('../services/user.service');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+
+const filterObj = (obj, ...allowFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((elem) => {
+    if (allowFields.includes(elem)) newObj[elem] = obj[elem];
+  });
+  return newObj;
+};
 
 exports.getAllusers = catchAsync(async (req, res, next) => {
   const users = await getAllusers(next);
@@ -35,23 +44,22 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-exports.updateUser = async (req, res) => {
-  try {
-    const user = await updateUser(req.params.id, req.body);
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        user
-      },
-      message: 'User updated'
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'error',
-      message: err.message
-    });
+exports.updateMe = catchAsync(async (req, res, next) => {
+  // 1) Create error if user posts password data
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        'This route is not for password updates. Please use /updateMyPassword',
+        400
+      )
+    );
   }
-};
+
+  // 2) Filter body request to prevent updating role or others premium fields
+  const filteredBody = filterObj(req.body, 'username', 'email');
+  // 3) Update user document
+  await updateMe(req.user, filteredBody, res);
+});
 
 exports.deleteUser = async (req, res) => {
   try {

@@ -75,16 +75,17 @@ exports.getUserById = async (id) => {
   }
 };
 
-exports.updateUser = async (id, body) => {
-  try {
-    const user = await User.findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true
-    });
-    return user;
-  } catch (error) {
-    throw Error(`Error while updating user: ${error}`);
-  }
+exports.updateMe = async (user, filteredBody, res) => {
+  const updatedUser = await User.findByIdAndUpdate(user.id, filteredBody, {
+    new: true,
+    runValidators: true
+  });
+  res.status(200).json({
+    data: {
+      status: 'success',
+      user: updatedUser
+    }
+  });
 };
 
 exports.deleteUser = async (id) => {
