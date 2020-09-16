@@ -4,7 +4,8 @@ const {
   signup,
   login,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  updatePassword
 } = require('../services/user.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -18,15 +19,7 @@ exports.signup = async (req, res, next) => {
         .status(200)
         .json({ status: 400, message: 'User found', type: 'already-found' });
     }
-    const result = await signup(req.body);
-    return res.status(201).json({
-      status: 'success',
-      token: result.token,
-      data: {
-        user: result.newUser
-      },
-      message: 'User created'
-    });
+    await signup(req.body, res);
   } catch (err) {
     res.status(400).json({
       status: 'fail',
@@ -48,7 +41,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('incorrect email or password', 401));
   }
   // 3) if everything is ok, send token to client
-  await login(user.id, res, next);
+  await login(user, res, next);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -82,4 +75,19 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const resetedPassword = await resetPassword(user, req, res);
 
   return resetedPassword;
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1) Get user from collection
+  const user = await User.findById(req.user._id).select('+password');
+  if (!user) {
+    return next(new AppError('User has not been found.', 404));
+  }
+
+  // 2) Check if current password is correct
+  if (!(await user.correctPassword(req.body.password, user.password))) {
+    return next(new AppError('Your current password is incorrect', 401));
+  }
+  // 3) Update password and send jwt to client
+  await updatePassword(user, req, res);
 });

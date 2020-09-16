@@ -13,14 +13,18 @@ const {
   signup,
   login,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  updatePassword
 } = require('../controllers/auth.controller');
+const { protect } = require('../middlewares/auth');
 
 router.post('/signup', signup);
 router.post('/login', login);
 
 router.post('/forgotPassword', forgotPassword);
 router.patch('/resetPassword/:token', resetPassword);
+
+router.patch('/updatePassword', protect, updatePassword);
 
 router.get('/', getAllusers);
 router.get('/:id', getUserById);
