@@ -6,7 +6,7 @@ const {
   forgotPassword,
   resetPassword,
   updatePassword
-} = require('../services/user.service');
+} = require('../services/auth.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
