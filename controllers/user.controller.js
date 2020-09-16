@@ -2,7 +2,8 @@ const {
   getAllusers,
   getUserById,
   deleteUser,
-  updateMe
+  updateMe,
+  deleteMe
 } = require('../services/user.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -59,6 +60,10 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   const filteredBody = filterObj(req.body, 'username', 'email');
   // 3) Update user document
   await updateMe(req.user, filteredBody, res);
+});
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await deleteMe(req, res);
 });
 
 exports.deleteUser = async (req, res) => {

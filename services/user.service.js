@@ -88,12 +88,13 @@ exports.updateMe = async (user, filteredBody, res) => {
   });
 };
 
-exports.deleteUser = async (id) => {
-  try {
-    await User.findOneAndDelete({ _id: id });
-  } catch (err) {
-    throw Error(`Error while deleting user: ${err}`);
-  }
+exports.deleteMe = async (req, res) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(204).json({
+    status: 'success',
+    data: null
+  });
 };
 
 exports.forgotPassword = async (user, req, res, next) => {

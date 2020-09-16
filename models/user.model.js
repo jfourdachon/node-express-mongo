@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'guide', 'lead-guide', 'admin'],
     default: 'user'
+  },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
   }
 });
 
@@ -68,6 +73,12 @@ userSchema.pre('save', function (next) {
 
   // Due to network token can be generated before new password is saved -> (- 1000)
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  // this point to the current query
+  this.find({ active: { $ne: false } });
   next();
 });
 
