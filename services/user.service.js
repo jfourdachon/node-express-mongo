@@ -8,15 +8,29 @@ const signToken = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 };
-exports.signup = async ({
-  username,
-  email,
-  photo,
-  password,
-  passwordConfirm,
-  passwordChangedAt,
-  role
-}) => {
+
+const createAndSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: {
+      user
+    }
+  });
+};
+exports.signup = async (
+  {
+    username,
+    email,
+    photo,
+    password,
+    passwordConfirm,
+    passwordChangedAt,
+    role
+  },
+  res
+) => {
   try {
     const newUser = await User.create({
       username,
@@ -28,25 +42,17 @@ exports.signup = async ({
       role
     });
 
-    const token = signToken(newUser.id);
-
-    const result = {
-      newUser,
-      token
-    };
+    const result = createAndSendToken(newUser, 201, res);
     return result;
   } catch (error) {
     throw Error(`Error while creating User: ${error}`);
   }
 };
 
-exports.login = async (id, res, next) => {
+exports.login = async (user, res, next) => {
   try {
-    const token = signToken(id);
-    res.status(200).json({
-      status: 'success',
-      token
-    });
+    const result = createAndSendToken(user, 200, res);
+    return result;
   } catch (error) {
     return next(new AppError(error.message, 404));
   }
@@ -135,9 +141,16 @@ exports.resetPassword = async (user, req, res) => {
   await user.save();
 
   // 2) Send new token to the client
-  const token = signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token
-  });
+  const result = createAndSendToken(user, 200, res);
+  return result;
+};
+
+exports.updatePassword = async (user, req, res) => {
+  // 1) Update the new password
+  user.password = req.body.newPassword;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+  // 2) Log user in, send JWT
+  const result = createAndSendToken(user, 200, res);
+  return result;
 };
