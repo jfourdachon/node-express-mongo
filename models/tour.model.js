@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'a product must have an name'],
+      required: [true, 'a tour must have an name'],
       unique: true,
       trim: true,
       maxlength: [40, 'A tour name must have less or equal than 40 characters'],
@@ -17,15 +16,15 @@ const tourSchema = new mongoose.Schema(
     slug: String,
     duration: {
       type: Number,
-      required: [true, 'a product must have an duration']
+      required: [true, 'a tour must have an duration']
     },
     maxGroupSize: {
       type: Number,
-      required: [true, 'a product must have a maxgroupSize']
+      required: [true, 'a tour must have a maxgroupSize']
     },
     difficulty: {
       type: String,
-      required: [true, 'a product must have a difficulty'],
+      required: [true, 'a tour must have a difficulty'],
       enum: {
         values: ['easy', 'medium', 'difficult'],
         message: 'Difficulty is either: easy, medium, difficult'
@@ -43,7 +42,7 @@ const tourSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      required: [true, 'a product must have a price']
+      required: [true, 'a tour must have a price']
     },
     priceDiscount: {
       type: Number,
@@ -58,17 +57,17 @@ const tourSchema = new mongoose.Schema(
     },
     summary: {
       type: String,
-      required: [true, 'a product must have a summary'],
+      required: [true, 'a tour must have a summary'],
       trim: true
     },
     description: {
       type: String,
-      required: [true, 'a product must have a description'],
+      required: [true, 'a tour must have a description'],
       trim: true
     },
     imageCover: {
       type: String,
-      required: [true, 'A product must have a cover image']
+      required: [true, 'a tour must have a cover image']
     },
     images: [String],
     createdAt: {
@@ -105,6 +104,13 @@ const tourSchema = new mongoose.Schema(
         description: String,
         day: Number
       }
+    ],
+    // Referencing -> normalization(relation)
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+      }
     ]
   },
   // add virtuals to schema (Cannot being queried!!!)
@@ -125,6 +131,13 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
+// Embeding guides
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
+
 // Middlewares .pre or .save can be chained
 tourSchema.pre('save', function (next) {
   // console.log('Will dave document...');
@@ -144,6 +157,17 @@ tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
 
   this.start = Date.now();
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  // Populate guides fields which are renferenced with id in DB
+  // Use it only when extremly needed -> slow performances
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt'
+  });
+
   next();
 });
 
