@@ -51,7 +51,6 @@ const tourSchema = new mongoose.Schema(
         //Custom validator, priceDiscount < price
         // this only points to currents doc on NEW document creation
         validator: function (val) {
-          console.log({ val });
           return val < this.price;
         },
         message: 'Discount price ({VALUE}) should be below regular price'
@@ -81,7 +80,32 @@ const tourSchema = new mongoose.Schema(
     secretTour: {
       type: Boolean,
       default: false
-    }
+    },
+    // Embeded fields (denormalization)
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point']
+      },
+      coordinates: [Number],
+      address: String,
+      description: String
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point']
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number
+      }
+    ]
   },
   // add virtuals to schema (Cannot being queried!!!)
   {
