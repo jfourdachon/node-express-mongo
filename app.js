@@ -49,7 +49,18 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // Prevent parameters pollution
-app.use(hpp());
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsAverage',
+      'ratingsQuantity',
+      'marxGroupSize',
+      'difficulty',
+      'price'
+    ]
+  })
+);
 
 // Test middleware
 app.use((req, _, next) => {
