@@ -36,12 +36,17 @@ const reviewSchema = new mongoose.Schema(
 );
 
 reviewSchema.pre(/^find/, function (next) {
+  // commented because redundant reviews in tour in review...
+  // this.populate({
+  //   path: 'user',
+  //   select: 'username photo'
+  // }).populate({
+  //   path: 'tour',
+  //   select: 'name'
+  // });
   this.populate({
     path: 'user',
     select: 'username photo'
-  }).populate({
-    path: 'tour',
-    select: 'name'
   });
   next();
 });
