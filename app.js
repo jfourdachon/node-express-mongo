@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const userRouter = require('./routes/user.route');
 const tourRouter = require('./routes/tour.route');
+const reviewRouter = require('./routes/review.route');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/error.controller');
 
@@ -72,6 +73,7 @@ app.use((req, _, next) => {
 
 app.use('/users', userRouter);
 app.use('/tours', tourRouter);
+app.use('/reviews', reviewRouter);
 
 // 404 - all routes not found in others middlewares
 app.all('*', (req, res, next) => {
