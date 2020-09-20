@@ -7,7 +7,8 @@ const {
   getUserById,
   updateMe,
   deleteMe,
-  deleteUser
+  deleteUser,
+  updateUser
 } = require('../controllers/user.controller');
 
 const {
@@ -31,6 +32,7 @@ router.get('/', getAllusers);
 router.get('/:id', getUserById);
 
 router.patch('/updateMe', protect, updateMe);
+router.patch('/:id', protect, updateUser);
 
 router.delete('/deleteMe', protect, deleteMe);
 router.delete('/:id', protect, restrictTo('admin'), deleteUser);

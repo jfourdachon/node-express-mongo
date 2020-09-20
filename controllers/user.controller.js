@@ -3,7 +3,8 @@ const {
   getUserById,
   deleteUser,
   updateMe,
-  deleteMe
+  deleteMe,
+  updateUser
 } = require('../services/user.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -66,5 +67,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await deleteMe(req, res);
 });
+
+// Do not update passwords with this
+exports.updateUser = factory.updateOne(updateUser);
 
 exports.deleteUser = factory.deleteOne(deleteUser);

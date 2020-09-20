@@ -1,6 +1,6 @@
-const { deleteOneInService } = require('../controllers/handlerFactory');
 const User = require('../models/user.model');
 const AppError = require('../utils/appError');
+const factory = require('../controllers/handlerFactory');
 
 exports.getAllusers = async (next) => {
   try {
@@ -32,6 +32,10 @@ exports.updateMe = async (user, filteredBody, res) => {
   });
 };
 
+exports.updateUser = (id, body, next) => {
+  return factory.updateOneInService(User, id, body, next);
+};
+
 exports.deleteMe = async (req, res) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -42,5 +46,5 @@ exports.deleteMe = async (req, res) => {
 };
 
 exports.deleteUser = async (id, next) => {
-  return deleteOneInService(User, id, next);
+  return factory.deleteOneInService(User, id, next);
 };

@@ -24,3 +24,28 @@ exports.deleteOneInService = async (Model, id, next) => {
     return next(new AppError(err.message, 404));
   }
 };
+
+exports.updateOne = (Service) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Service(req.params.id, req.body, next);
+
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        data: doc
+      },
+      message: 'Document updated'
+    });
+  });
+
+exports.updateOneInService = async (Model, id, body, next) => {
+  try {
+    const doc = await Model.findByIdAndUpdate(id, body, {
+      new: true,
+      runValidators: true // validators from schema
+    });
+    return doc;
+  } catch (error) {
+    return next(new AppError(error.message, 404));
+  }
+};

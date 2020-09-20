@@ -1,7 +1,7 @@
 const APIFeatures = require('../utils/apiFeatures');
 const Tour = require('../models/tour.model');
 const AppError = require('../utils/appError');
-const { deleteOneInService } = require('../controllers/handlerFactory');
+const factory = require('../controllers/handlerFactory');
 
 exports.createTour = async (args, next) => {
   try {
@@ -38,19 +38,11 @@ exports.getTourById = async (id, next) => {
 };
 
 exports.updateTour = async (id, body, next) => {
-  try {
-    const tour = await Tour.findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true // validators from schema
-    });
-    return tour;
-  } catch (error) {
-    return next(new AppError(error.message, 404));
-  }
+  return factory.updateOneInService(Tour, id, body, next);
 };
 
 exports.deleteTour = async (id, next) => {
-  return deleteOneInService(Tour, id, next);
+  return factory.deleteOneInService(Tour, id, next);
 };
 
 exports.aggregateTour = async () => {
