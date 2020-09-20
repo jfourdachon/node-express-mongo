@@ -51,7 +51,7 @@ class APIFeatures {
   paginate() {
     //4) Pagination
     const page = this.queryString.page * 1 || 1; // convert string to number
-    const limit = this.queryString.limit * 1 || 5;
+    const limit = this.queryString.limit * 1 || 10;
     const skip = (page - 1) * limit;
     // page=2&limit=5, 1-5 in page 1 and 6 to 10 in page 2...
     this.query = this.query.skip(skip).limit(limit);

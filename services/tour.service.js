@@ -1,61 +1,20 @@
-const APIFeatures = require('../utils/apiFeatures');
 const Tour = require('../models/tour.model');
-const AppError = require('../utils/appError');
+const factory = require('../controllers/handlerFactory');
 
-exports.createTour = async (args, next) => {
-  try {
-    const newTour = await Tour.create(args);
-    return newTour;
-  } catch (error) {
-    return next(new AppError(`Error while creating Tour: ${error}`, 404));
-  }
-};
+exports.createTour = async (args, next) =>
+  factory.createOneInService(Tour, args, next);
 
-exports.getAllTours = async (params) => {
-  try {
-    // EXECUTE QUERY
-    const features = new APIFeatures(Tour.find(), params)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
-    const tours = await features.query;
+exports.getAllTours = async (params, next) =>
+  factory.getAllInService(Tour, params, next);
 
-    //SEND RESPONSE
-    return tours;
-  } catch (error) {
-    throw Error(`Error while getting tours: ${error}`);
-  }
-};
-exports.getTourById = async (id, next) => {
-  try {
-    const tour = await Tour.findById(id).populate('reviews');
-    return tour;
-  } catch (error) {
-    return next(new AppError('No tour was found with this ID!', 404));
-  }
-};
+exports.getTourById = async (id, next) =>
+  factory.getOneInService(Tour, id, { path: 'reviews' }, next);
 
-exports.updateTour = async (id, body, next) => {
-  try {
-    const tour = await Tour.findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true // validators from schema
-    });
-    return tour;
-  } catch (error) {
-    return next(new AppError(error.message, 404));
-  }
-};
+exports.updateTour = async (id, body, next) =>
+  factory.updateOneInService(Tour, id, body, next);
 
-exports.deleteTour = async (id, next) => {
-  try {
-    const tour = await Tour.findOneAndDelete({ _id: id });
-    return tour;
-  } catch (err) {
-    return next(new AppError(err.message, 404));
-  }
-};
+exports.deleteTour = async (id, next) =>
+  factory.deleteOneInService(Tour, id, next);
 
 exports.aggregateTour = async () => {
   try {

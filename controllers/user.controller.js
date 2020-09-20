@@ -3,10 +3,12 @@ const {
   getUserById,
   deleteUser,
   updateMe,
-  deleteMe
+  deleteMe,
+  updateUser
 } = require('../services/user.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowFields) => {
   const newObj = {};
@@ -16,34 +18,9 @@ const filterObj = (obj, ...allowFields) => {
   return newObj;
 };
 
-exports.getAllusers = catchAsync(async (req, res, next) => {
-  const users = await getAllusers(next);
-  return res.status(200).json({
-    status: 'success',
-    data: {
-      users
-    },
-    message: 'Succesfully fetching users'
-  });
-});
+exports.getAllusers = factory.getAll(getAllusers);
 
-exports.getUserById = async (req, res) => {
-  try {
-    const user = await getUserById(req.params.id);
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        user
-      },
-      message: 'Successfully fetching users'
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'error',
-      message: err
-    });
-  }
-};
+exports.getUserById = factory.getOne(getUserById);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user posts password data
@@ -66,20 +43,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   await deleteMe(req, res);
 });
 
-exports.deleteUser = async (req, res) => {
-  try {
-    await deleteUser(req.params.id);
-    return res.status(204).json({
-      status: 'success',
-      data: {
-        data: null
-      },
-      message: 'User deleted'
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'error',
-      message: err.message
-    });
-  }
-};
+// Do not update passwords with this
+exports.updateUser = factory.updateOne(updateUser);
+
+exports.deleteUser = factory.deleteOne(deleteUser);
