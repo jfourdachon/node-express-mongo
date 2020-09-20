@@ -137,8 +137,8 @@ exports.getAllInService = async (Model, params, next, filter) => {
     const features = new APIFeatures(Model.find(filter), params)
       .filter()
       .sort()
-      .limitFields()
-      .paginate();
+      .limitFields();
+    // .paginate();
     const docs = await features.query;
 
     //SEND RESPONSE
