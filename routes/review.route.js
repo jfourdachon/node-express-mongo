@@ -1,7 +1,8 @@
 const express = require('express');
 const {
   getAllReviews,
-  createReview
+  createReview,
+  deleteReview
 } = require('../controllers/review.controller');
 const { protect, restrictTo } = require('../middlewares/auth');
 
@@ -13,5 +14,7 @@ const router = express.Router({ mergeParams: true }); // mergeParams comes from 
 router.get('/', getAllReviews);
 
 router.post('/', protect, restrictTo('user'), createReview);
+
+router.delete('/:id', protect, restrictTo('admin'), deleteReview);
 
 module.exports = router;

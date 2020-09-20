@@ -1,5 +1,6 @@
 const AppError = require('../utils/appError');
 const Review = require('../models/review.model');
+const { deleteOneInService } = require('../controllers/handlerFactory');
 
 exports.getAllReviews = async (filter) => {
   try {
@@ -17,4 +18,8 @@ exports.createReview = async (args, next) => {
   } catch (error) {
     return next(new AppError(`Error while creating Review: ${error}`, 404));
   }
+};
+
+exports.deleteReview = async (id, next) => {
+  return deleteOneInService(Review, id, next);
 };

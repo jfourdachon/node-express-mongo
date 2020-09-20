@@ -1,6 +1,7 @@
 const APIFeatures = require('../utils/apiFeatures');
 const Tour = require('../models/tour.model');
 const AppError = require('../utils/appError');
+const { deleteOneInService } = require('../controllers/handlerFactory');
 
 exports.createTour = async (args, next) => {
   try {
@@ -49,12 +50,7 @@ exports.updateTour = async (id, body, next) => {
 };
 
 exports.deleteTour = async (id, next) => {
-  try {
-    const tour = await Tour.findOneAndDelete({ _id: id });
-    return tour;
-  } catch (err) {
-    return next(new AppError(err.message, 404));
-  }
+  return deleteOneInService(Tour, id, next);
 };
 
 exports.aggregateTour = async () => {

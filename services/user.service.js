@@ -1,3 +1,4 @@
+const { deleteOneInService } = require('../controllers/handlerFactory');
 const User = require('../models/user.model');
 const AppError = require('../utils/appError');
 
@@ -38,4 +39,8 @@ exports.deleteMe = async (req, res) => {
     status: 'success',
     data: null
   });
+};
+
+exports.deleteUser = async (id, next) => {
+  return deleteOneInService(User, id, next);
 };

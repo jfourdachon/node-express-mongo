@@ -6,7 +6,8 @@ const {
   getAllusers,
   getUserById,
   updateMe,
-  deleteMe
+  deleteMe,
+  deleteUser
 } = require('../controllers/user.controller');
 
 const {
@@ -16,7 +17,7 @@ const {
   resetPassword,
   updatePassword
 } = require('../controllers/auth.controller');
-const { protect } = require('../middlewares/auth');
+const { protect, restrictTo } = require('../middlewares/auth');
 
 router.post('/signup', signup);
 router.post('/login', login);
@@ -32,5 +33,6 @@ router.get('/:id', getUserById);
 router.patch('/updateMe', protect, updateMe);
 
 router.delete('/deleteMe', protect, deleteMe);
+router.delete('/:id', protect, restrictTo('admin'), deleteUser);
 
 module.exports = router;
