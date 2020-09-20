@@ -1,24 +1,17 @@
-const AppError = require('../utils/appError');
 const Review = require('../models/review.model');
 const factory = require('../controllers/handlerFactory');
 
-exports.getAllReviews = async (filter) => {
-  try {
-    const reviews = Review.find(filter).select('-__v');
-    return reviews;
-  } catch (error) {
-    throw Error({ error });
-  }
-};
+exports.getAllReviews = async (params, next, filter) =>
+  factory.getAllInService(Review, params, next, filter);
 
-exports.createReview = async (args, next) => {
-  return factory.createOneInService(Review, args, next);
-};
+exports.getReviewById = async (id, next) =>
+  factory.getOneInService(Review, id, null, next);
 
-exports.updateReview = async (id, body, next) => {
-  return factory.updateOneInService(Review, id, body, next);
-};
+exports.createReview = async (args, next) =>
+  factory.createOneInService(Review, args, next);
 
-exports.deleteReview = async (id, next) => {
-  return factory.deleteOneInService(Review, id, next);
-};
+exports.updateReview = async (id, body, next) =>
+  factory.updateOneInService(Review, id, body, next);
+
+exports.deleteReview = async (id, next) =>
+  factory.deleteOneInService(Review, id, next);

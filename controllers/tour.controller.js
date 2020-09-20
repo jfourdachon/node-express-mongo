@@ -8,7 +8,6 @@ const {
   getMonthlyPlan
 } = require('../services/tour.service');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
 exports.aliasTopTours = (req, _, next) => {
@@ -18,33 +17,9 @@ exports.aliasTopTours = (req, _, next) => {
   next();
 };
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  const tours = await getAllTours(req.query);
+exports.getAllTours = factory.getAll(getAllTours);
 
-  return res.status(200).json({
-    status: 'success',
-    result: tours.length,
-    data: {
-      tours
-    },
-    message: 'Succesfully fetched tours'
-  });
-});
-
-exports.getTourById = catchAsync(async (req, res, next) => {
-  // TODO make a better express errors handling
-  const tour = await getTourById(req.params.id, next);
-  if (!tour) {
-    return next(new AppError('No tour was found with this ID!', 404));
-  }
-  return res.status(200).json({
-    status: 'success',
-    data: {
-      tour
-    },
-    message: 'Successfully fetched tour'
-  });
-});
+exports.getTourById = factory.getOne(getTourById);
 
 exports.createTour = factory.createOne(createTour);
 

@@ -3,7 +3,8 @@ const {
   getAllReviews,
   createReview,
   deleteReview,
-  updateReview
+  updateReview,
+  getReviewById
 } = require('../controllers/review.controller');
 const { protect, restrictTo } = require('../middlewares/auth');
 const { setTourUserIds } = require('../middlewares/review');
@@ -14,7 +15,7 @@ const router = express.Router({ mergeParams: true }); // mergeParams comes from 
 // POST /reviews
 
 router.get('/', getAllReviews);
-
+router.get('/:id', protect, getReviewById);
 router.post('/', protect, restrictTo('user'), setTourUserIds, createReview);
 
 router.patch('/:id', protect, updateReview);

@@ -18,34 +18,9 @@ const filterObj = (obj, ...allowFields) => {
   return newObj;
 };
 
-exports.getAllusers = catchAsync(async (req, res, next) => {
-  const users = await getAllusers(next);
-  return res.status(200).json({
-    status: 'success',
-    data: {
-      users
-    },
-    message: 'Succesfully fetching users'
-  });
-});
+exports.getAllusers = factory.getAll(getAllusers);
 
-exports.getUserById = async (req, res) => {
-  try {
-    const user = await getUserById(req.params.id);
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        user
-      },
-      message: 'Successfully fetching users'
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'error',
-      message: err
-    });
-  }
-};
+exports.getUserById = factory.getOne(getUserById);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user posts password data
