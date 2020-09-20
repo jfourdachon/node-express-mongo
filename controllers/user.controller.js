@@ -22,6 +22,16 @@ exports.getAllusers = factory.getAll(getAllusers);
 
 exports.getUserById = factory.getOne(getUserById);
 
+// Do not update passwords with this
+exports.updateUser = factory.updateOne(updateUser);
+
+exports.deleteUser = factory.deleteOne(deleteUser);
+
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user posts password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -42,8 +52,3 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await deleteMe(req, res);
 });
-
-// Do not update passwords with this
-exports.updateUser = factory.updateOne(updateUser);
-
-exports.deleteUser = factory.deleteOne(deleteUser);

@@ -8,7 +8,8 @@ const {
   updateMe,
   deleteMe,
   deleteUser,
-  updateUser
+  updateUser,
+  getMe
 } = require('../controllers/user.controller');
 
 const {
@@ -20,6 +21,7 @@ const {
 } = require('../controllers/auth.controller');
 const { protect, restrictTo } = require('../middlewares/auth');
 
+router.get('/me', protect, getMe, getUserById);
 router.post('/signup', signup);
 router.post('/login', login);
 
