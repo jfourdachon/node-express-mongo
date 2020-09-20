@@ -6,6 +6,7 @@ const {
   updateReview
 } = require('../controllers/review.controller');
 const { protect, restrictTo } = require('../middlewares/auth');
+const { setTourUserIds } = require('../middlewares/review');
 
 const router = express.Router({ mergeParams: true }); // mergeParams comes from nested tour route ('/tourId/reviews', reviewRouter)
 
@@ -14,7 +15,7 @@ const router = express.Router({ mergeParams: true }); // mergeParams comes from 
 
 router.get('/', getAllReviews);
 
-router.post('/', protect, restrictTo('user'), createReview);
+router.post('/', protect, restrictTo('user'), setTourUserIds, createReview);
 
 router.patch('/:id', protect, updateReview);
 

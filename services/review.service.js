@@ -12,12 +12,7 @@ exports.getAllReviews = async (filter) => {
 };
 
 exports.createReview = async (args, next) => {
-  try {
-    const newReview = await Review.create(args);
-    return newReview;
-  } catch (error) {
-    return next(new AppError(`Error while creating Review: ${error}`, 404));
-  }
+  return factory.createOneInService(Review, args, next);
 };
 
 exports.updateReview = async (id, body, next) => {

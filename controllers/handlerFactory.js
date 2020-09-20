@@ -1,6 +1,9 @@
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
+/***************************************
+ * ******  DELETE FACTORY
+ ***************************************/
 exports.deleteOne = (Service) =>
   catchAsync(async (req, res, next) => {
     const doc = await Service(req.params.id, next);
@@ -25,6 +28,9 @@ exports.deleteOneInService = async (Model, id, next) => {
   }
 };
 
+/***************************************
+ * ******  UPDATE FACTORY
+ ***************************************/
 exports.updateOne = (Service) =>
   catchAsync(async (req, res, next) => {
     const doc = await Service(req.params.id, req.body, next);
@@ -47,5 +53,30 @@ exports.updateOneInService = async (Model, id, body, next) => {
     return doc;
   } catch (error) {
     return next(new AppError(error.message, 404));
+  }
+};
+
+/***************************************
+ * ******  CREATE FACTORY
+ ***************************************/
+
+exports.createOne = (Service) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Service(req.body, next);
+    return res.status(201).json({
+      status: 'success',
+      data: {
+        doc
+      },
+      message: 'Document created'
+    });
+  });
+
+exports.createOneInService = async (Model, args, next) => {
+  try {
+    const newDoc = await Model.create(args);
+    return newDoc;
+  } catch (error) {
+    return next(new AppError(`Error while creating Doc: ${error}`, 404));
   }
 };

@@ -4,12 +4,7 @@ const AppError = require('../utils/appError');
 const factory = require('../controllers/handlerFactory');
 
 exports.createTour = async (args, next) => {
-  try {
-    const newTour = await Tour.create(args);
-    return newTour;
-  } catch (error) {
-    return next(new AppError(`Error while creating Tour: ${error}`, 404));
-  }
+  return factory.createOneInService(Tour, args, next);
 };
 
 exports.getAllTours = async (params) => {

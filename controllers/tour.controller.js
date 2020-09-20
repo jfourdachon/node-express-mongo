@@ -46,16 +46,7 @@ exports.getTourById = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  const tour = await createTour(req.body, next);
-  return res.status(201).json({
-    status: 'success',
-    data: {
-      tour
-    },
-    message: 'Tour created'
-  });
-});
+exports.createTour = factory.createOne(createTour);
 
 exports.updateTour = factory.updateOne(updateTour);
 
