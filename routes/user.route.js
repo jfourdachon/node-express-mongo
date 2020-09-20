@@ -9,7 +9,8 @@ const {
   deleteMe,
   deleteUser,
   updateUser,
-  getMe
+  getMe,
+  createUser
 } = require('../controllers/user.controller');
 
 const {
@@ -21,22 +22,27 @@ const {
 } = require('../controllers/auth.controller');
 const { protect, restrictTo } = require('../middlewares/auth');
 
-router.get('/me', protect, getMe, getUserById);
+// No authentication needed for that routes
 router.post('/signup', signup);
 router.post('/login', login);
-
 router.post('/forgotPassword', forgotPassword);
 router.patch('/resetPassword/:token', resetPassword);
 
-router.patch('/updatePassword', protect, updatePassword);
+// Use authentication for all routes after this middleware
+router.use(protect);
+
+router.get('/me', getMe, getUserById);
+router.patch('/updateMe', updateMe);
+router.delete('/deleteMe', deleteMe);
+router.patch('/updatePassword', updatePassword);
+
+// Only admin are authorized on that routes
+router.use(restrictTo('admin'));
 
 router.get('/', getAllusers);
 router.get('/:id', getUserById);
-
-router.patch('/updateMe', protect, updateMe);
-router.patch('/:id', protect, updateUser);
-
-router.delete('/deleteMe', protect, deleteMe);
-router.delete('/:id', protect, restrictTo('admin'), deleteUser);
+router.post('/register', createUser);
+router.patch('/:id', updateUser);
+router.delete('/:id', deleteUser);
 
 module.exports = router;
