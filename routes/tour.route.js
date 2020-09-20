@@ -23,17 +23,22 @@ router.use('/:tourId/reviews', reviewRouter);
 // alias with middleware
 router.get('/top-5-cheap', aliasTopTours, getAllTours);
 
-// aggregation routes
-router.get('/stats', getTourStats);
-router.get('/monthly-plan/:year', getMonthlyPlan);
-
-router.get('/', protect, getAllTours);
+router.get('/', getAllTours);
 router.get('/:id', getTourById);
 
-router.post('/register', createTour);
+router.get(
+  '/monthly-plan/:year',
+  protect,
+  restrictTo('admin', 'lead-guide', 'guide'),
+  getMonthlyPlan
+);
 
+router.use(protect, restrictTo('admin', 'lead-guide'));
+// aggregation routes
+router.get('/stats', getTourStats);
+
+router.post('/register', protect, createTour);
 router.patch('/:id', updateTour);
-
-router.delete('/:id', protect, restrictTo('admin', 'lead-guide'), deleteTour);
+router.delete('/:id', protect, deleteTour);
 
 module.exports = router;

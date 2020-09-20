@@ -4,7 +4,8 @@ const {
   deleteUser,
   updateMe,
   deleteMe,
-  updateUser
+  updateUser,
+  createUser
 } = require('../services/user.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -21,6 +22,8 @@ const filterObj = (obj, ...allowFields) => {
 exports.getAllusers = factory.getAll(getAllusers);
 
 exports.getUserById = factory.getOne(getUserById);
+
+exports.createUser = factory.createOne(createUser);
 
 // Do not update passwords with this
 exports.updateUser = factory.updateOne(updateUser);

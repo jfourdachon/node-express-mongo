@@ -1,17 +1,19 @@
 const User = require('../models/user.model');
 const factory = require('../controllers/handlerFactory');
 
-exports.getAllusers = async (params, next, filter) =>
+exports.getAllusers = (params, next, filter) =>
   factory.getAllInService(User, params, next, filter);
 
-exports.getUserById = async (id, next) =>
+exports.getUserById = (id, next) =>
   factory.getOneInService(User, id, null, next);
+
+exports.createUser = (args, next) =>
+  factory.createOneInService(User, args, next);
 
 exports.updateUser = (id, body, next) =>
   factory.updateOneInService(User, id, body, next);
 
-exports.deleteUser = async (id, next) =>
-  factory.deleteOneInService(User, id, next);
+exports.deleteUser = (id, next) => factory.deleteOneInService(User, id, next);
 
 exports.updateMe = async (user, filteredBody, res) => {
   const updatedUser = await User.findByIdAndUpdate(user.id, filteredBody, {
