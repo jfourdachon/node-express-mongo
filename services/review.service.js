@@ -1,9 +1,9 @@
 const AppError = require('../utils/appError');
 const Review = require('../models/review.model');
 
-exports.getAllReviews = async () => {
+exports.getAllReviews = async (filter) => {
   try {
-    const reviews = Review.find().select('-__v');
+    const reviews = Review.find(filter).select('-__v');
     return reviews;
   } catch (error) {
     throw Error({ error });
