@@ -139,6 +139,7 @@ exports.getAllInService = async (Model, params, next, filter) => {
       .sort()
       .limitFields();
     // .paginate();
+    // const docs = await features.query.explain();  // UseFul to see indexes benefits
     const docs = await features.query;
 
     //SEND RESPONSE
