@@ -6,7 +6,9 @@ const {
   updateTour,
   deleteTour,
   aggregateTour,
-  getMonthlyPlan
+  getMonthlyPlan,
+  getToursWithin,
+  getDistances
 } = require('../services/tour.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -64,10 +66,7 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     );
   }
 
-  const tours = await Tour.find({
-    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }
-  });
-  console.log({ distance, lat, lng, unit, radius });
+  const tours = await getToursWithin(lat, lng, radius);
 
   res.status(200).json({
     status: 'success',
@@ -92,24 +91,7 @@ exports.getDistances = catchAsync(async (req, res, next) => {
     );
   }
 
-  const distances = await Tour.aggregate([
-    {
-      $geoNear: {
-        near: {
-          type: 'Point',
-          coordinates: [lng * 1, lat * 1]
-        },
-        distanceField: 'distance',
-        distanceMultiplier: multiplier
-      }
-    },
-    {
-      $project: {
-        distance: 1,
-        name: 1
-      }
-    }
-  ]);
+  const distances = await getDistances(lng, lat, multiplier);
 
   res.status(200).json({
     status: 'success',
