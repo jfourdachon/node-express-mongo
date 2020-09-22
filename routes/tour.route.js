@@ -11,7 +11,8 @@ const {
   deleteTour,
   aliasTopTours,
   getTourStats,
-  getMonthlyPlan
+  getMonthlyPlan,
+  getToursWithin
 } = require('../controllers/tour.controller');
 const reviewRouter = require('./review.route');
 
@@ -32,6 +33,10 @@ router.get(
   restrictTo('admin', 'lead-guide', 'guide'),
   getMonthlyPlan
 );
+
+router.get('/tours-within/:distance/center/:latlng/unit/:unit', getToursWithin);
+// /tours-within?ditance?distance=233&center=45.756804,4.838143&unit=km   ugly
+// /tours-within/233/center/45.756804,4.838143/unit/km                    looks cleaner
 
 router.use(protect, restrictTo('admin', 'lead-guide'));
 // aggregation routes
