@@ -65,10 +65,17 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
     }
   ]);
   // Save stats to tour collection
-  await Tour.findByIdAndUpdate(tourId, {
-    ratingsQuantity: stats[0].nbRating,
-    ratingsAverage: stats[0].avgRating
-  });
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: stats[0].nbRating,
+      ratingsAverage: stats[0].avgRating
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5
+    });
+  }
 };
 
 // Post middleware doesn't have access to next function
@@ -76,6 +83,18 @@ reviewSchema.post('save', function () {
   // this points to current review
   // this.constructor = Review model
   this.constructor.calcAverageRatings(this.tour);
+});
+
+// Recalculate ratings stats after update and delete
+// FincByIdAndUpdate
+// FincByIdAndDelete
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.review = await this.findOne();
+  next();
+});
+reviewSchema.post(/^findOneAnd/, async function () {
+  // await this.findOne(); DOES NOT work here, query hqs qlready executed
+  await this.review.constructor.calcAverageRatings(this.review.tour);
 });
 
 const Review = mongoose.model('Review', reviewSchema);
