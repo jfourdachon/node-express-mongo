@@ -192,8 +192,12 @@ tourSchema.post(/^find/, function (docs, next) {
 
 //  AGGREGATION MIDDLEWARE
 tourSchema.pre('aggregate', function (next) {
-  // add $match to aggregation pipeline
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  // $geoner MUST BE the first satge in aggreagation pipeline
+  if (this.pipeline()[0].$geoNear) {
+    this.pipeline().push({ $match: { secretTour: { $ne: true } } });
+  } else {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  }
 
   //current aggregation obj
   console.log(this);

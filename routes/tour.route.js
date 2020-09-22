@@ -12,7 +12,8 @@ const {
   aliasTopTours,
   getTourStats,
   getMonthlyPlan,
-  getToursWithin
+  getToursWithin,
+  getDistances
 } = require('../controllers/tour.controller');
 const reviewRouter = require('./review.route');
 
@@ -23,6 +24,9 @@ router.use('/:tourId/reviews', reviewRouter);
 
 // alias with middleware
 router.get('/top-5-cheap', aliasTopTours, getAllTours);
+
+// aggregation routes
+router.get('/stats', getTourStats);
 
 router.get('/', getAllTours);
 router.get('/:id', getTourById);
@@ -38,9 +42,9 @@ router.get('/tours-within/:distance/center/:latlng/unit/:unit', getToursWithin);
 // /tours-within?ditance?distance=233&center=45.756804,4.838143&unit=km   ugly
 // /tours-within/233/center/45.756804,4.838143/unit/km                    looks cleaner
 
+router.get('/distances/:latlng/unit/:unit', getDistances);
+
 router.use(protect, restrictTo('admin', 'lead-guide'));
-// aggregation routes
-router.get('/stats', getTourStats);
 
 router.post('/register', protect, createTour);
 router.patch('/:id', updateTour);
