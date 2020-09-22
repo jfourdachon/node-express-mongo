@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Tour = require('./tour.model');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -49,6 +50,32 @@ reviewSchema.pre(/^find/, function (next) {
     select: 'username photo'
   });
   next();
+});
+
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  // cacluate tours reviews with aggregate
+  const stats = await this.aggregate([
+    { $match: { tour: tourId } },
+    {
+      $group: {
+        _id: '$tour',
+        nbRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' }
+      }
+    }
+  ]);
+  // Save stats to tour collection
+  await Tour.findByIdAndUpdate(tourId, {
+    ratingsQuantity: stats[0].nbRating,
+    ratingsAverage: stats[0].avgRating
+  });
+};
+
+// Post middleware doesn't have access to next function
+reviewSchema.post('save', function () {
+  // this points to current review
+  // this.constructor = Review model
+  this.constructor.calcAverageRatings(this.tour);
 });
 
 const Review = mongoose.model('Review', reviewSchema);
