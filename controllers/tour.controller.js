@@ -1,4 +1,3 @@
-const Tour = require('../models/tour.model');
 const {
   createTour,
   getAllTours,
@@ -8,7 +7,8 @@ const {
   aggregateTour,
   getMonthlyPlan,
   getToursWithin,
-  getDistances
+  getDistances,
+  getTourBySlug
 } = require('../services/tour.service');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -30,6 +30,16 @@ exports.createTour = factory.createOne(createTour);
 exports.updateTour = factory.updateOne(updateTour);
 
 exports.deleteTour = factory.deleteOne(deleteTour);
+
+exports.getTourBySlug = catchAsync(async (req, res, next) => {
+  const tour = await getTourBySlug(req.params.slug, next);
+  return res.status(200).json({
+    status: 'success',
+    data: {
+      data: tour
+    }
+  });
+});
 
 exports.getTourStats = catchAsync(async (_, res, next) => {
   const stats = await aggregateTour();

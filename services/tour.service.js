@@ -16,6 +16,14 @@ exports.updateTour = async (id, body, next) =>
 exports.deleteTour = async (id, next) =>
   factory.deleteOneInService(Tour, id, next);
 
+exports.getTourBySlug = async (slug, next) => {
+  const tour = await Tour.findOne({ slug }).populate({
+    path: 'reviews',
+    select: 'review rating user'
+  });
+  return tour;
+};
+
 exports.aggregateTour = async () => {
   try {
     const stats = await Tour.aggregate([
