@@ -35,9 +35,7 @@ exports.getTourBySlug = catchAsync(async (req, res, next) => {
   const tour = await getTourBySlug(req.params.slug, next);
   return res.status(200).json({
     status: 'success',
-    data: {
-      data: tour
-    }
+    data: tour
   });
 });
 
@@ -45,9 +43,7 @@ exports.getTourStats = catchAsync(async (_, res, next) => {
   const stats = await aggregateTour();
   return res.status(200).json({
     status: 'success',
-    data: {
-      data: stats
-    }
+    data: stats
   });
 });
 
@@ -55,9 +51,7 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   const plan = await getMonthlyPlan(req.params);
   return res.status(200).json({
     status: 'success',
-    data: {
-      data: plan
-    }
+    data: plan
   });
 });
 
@@ -81,9 +75,7 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
-    data: {
-      data: tours
-    }
+    data: tours
   });
 });
 
@@ -106,8 +98,6 @@ exports.getDistances = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     results: distances.length,
-    data: {
-      data: distances
-    }
+    data: distances
   });
 });
